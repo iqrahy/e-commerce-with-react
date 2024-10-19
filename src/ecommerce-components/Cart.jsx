@@ -1,10 +1,19 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 
 const Cart = (props) => {
+  const { open, toggleDrawer } = props;
+  const [cartItems, setCartItems] = useState([]);
 
-    const { open, toggleDrawer } = props;
+  console.log(cartItems);
+  
+
+  useEffect(() => {
+    const cartItemArr = localStorage.getItem('cartItems')
+    setCartItems(cartItemArr);
+    
+  }, []);
 
   return (
     <>
@@ -16,7 +25,7 @@ const Cart = (props) => {
         ></Box>
       </Drawer>
     </>
-  )
-}
+  );
+};
 
-export default Cart
+export default Cart;

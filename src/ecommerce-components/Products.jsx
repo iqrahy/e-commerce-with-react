@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -52,20 +52,25 @@ const Products = () => {
   const [openAlert, setOpenAlert] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
 
-  console.log(cartList);
-
   const cartHandler = (product) => {
     const isExist = cartList.find((cart) => cart.id === product.id);
 
+   
+
     if (!isExist) {
       setCartList((prev) => [...prev, product]);
+     
       setOpenSuccess(true);
     } else {
+
+      const strCart = JSON.stringify(cartList);
+      localStorage.setItem("cartItems", strCart);
+
       setOpenAlert(true);
     }
   };
 
-  const handleClose = (event, reason) => {
+  const handleClose = (reason) => {
     if (reason === "clickaway") {
       return;
     }
@@ -73,7 +78,7 @@ const Products = () => {
     setOpenAlert(false);
   };
 
-  const successHandleClose = (event, reason) => {
+  const successHandleClose = (reason) => {
     if (reason === "clickaway") {
       return;
     }
@@ -92,20 +97,25 @@ const Products = () => {
       </IconButton>
     </React.Fragment>
   );
+
   return (
     <>
+      {/* already added item snackbar */}
       <Snackbar
         open={openAlert}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
         autoHideDuration={2000}
         onClose={handleClose}
         message="Product already in cart"
         action={action}
         ContentProps={{
           sx: {
-            background: "red"
-          }
+            background: "#D32F2F",
+          },
         }}
       />
+
+      {/* item added successfully snackbar */}
 
       <Snackbar
         open={openSuccess}
@@ -113,6 +123,11 @@ const Products = () => {
         autoHideDuration={2000}
         severity="success"
         onClose={successHandleClose}
+        ContentProps={{
+          sx: {
+            background: "green",
+          },
+        }}
       >
         <Alert
           onClose={successHandleClose}
