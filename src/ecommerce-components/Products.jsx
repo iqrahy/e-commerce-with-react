@@ -14,6 +14,11 @@ import ShareIcon from "@mui/icons-material/Share";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Divider from "@mui/material/Divider";
+import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
 
 const products = [
   {
@@ -43,77 +48,141 @@ const products = [
 ];
 
 const Products = () => {
+  const [cartList, setCartList] = useState([]);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
 
-
-    const [cartList, setCartList] = useState([])
-
-    console.log(cartList);
-    
+  console.log(cartList);
 
   const cartHandler = (product) => {
-    setCartList([product])
-    
+    const isExist = cartList.find((cart) => cart.id === product.id);
+
+    if (!isExist) {
+      setCartList((prev) => [...prev, product]);
+      setOpenSuccess(true);
+    } else {
+      setOpenAlert(true);
+    }
   };
 
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenAlert(false);
+  };
+
+  const successHandleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenSuccess(false);
+  };
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
   return (
-    <Box sx={{ backgroundColor: "#FAFAFA", height: "88vh" }}>
-      <Box className="d-flex justify-content-between p-5">
-        {products?.map((product, index) => {
-          return (
-            <Card key={index}>
-              <CardActionArea>
-                <CardMedia
-                  component="img"
-                  sx={{ width: "270px" }}
-                  image={product.img}
-                  alt={`${product.name}`}
-                />
-                <CardContent className="d-flex justify-content-between align-items-center">
-                  <Typography gutterBottom variant="h5" component="div">
-                    {product.name}
-                  </Typography>
-                  <Typography variant="inherit" component="div">
-                    ${product.price}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-              <Divider sx={{ borderColor: "gray" }} />
-              <CardActions>
-                <Box className="d-flex justify-content-between align-items-center w-100 py-1 ">
-                  <ShareIcon
-                    className="fs-1 py-1 rounded-1"
-                    sx={{
-                      cursor: "pointer",
-                      border: "1px solid #7FBA00",
-                      color: "#7FBA00",
-                    }}
+    <>
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        message="Product already in cart"
+        action={action}
+        ContentProps={{
+          sx: {
+            background: "red"
+          }
+        }}
+      />
+
+      <Snackbar
+        open={openSuccess}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        autoHideDuration={2000}
+        severity="success"
+        onClose={successHandleClose}
+      >
+        <Alert
+          onClose={successHandleClose}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Item successfully added!
+        </Alert>
+      </Snackbar>
+
+      <Box sx={{ backgroundColor: "#FAFAFA", height: "88vh" }}>
+        <Box className="d-flex justify-content-between p-5">
+          {products?.map((product, index) => {
+            return (
+              <Card key={index}>
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    sx={{ width: "270px" }}
+                    image={product.img}
+                    alt={`${product.name}`}
                   />
-                  <ShoppingCartIcon
-                    sx={{
-                      cursor: "pointer",
-                      backgroundColor: "#7FBA00",
-                      color: "#fff",
-                    }}
-                    className="w-50 fs-1 py-1 rounded-1"
-                    onClick={()=>{
-                        cartHandler(product)
-                    }}
-                  />
-                  <FavoriteBorderIcon
-                    className="rounded-1 fs-1 py-1"
-                    sx={{
-                      cursor: "pointer",
-                      border: "1px solid #7FBA00",
-                      color: "#7FBA00",
-                    }}
-                  />
-                </Box>
-              </CardActions>
-            </Card>
-          );
-        })}
+                  <CardContent className="d-flex justify-content-between align-items-center">
+                    <Typography gutterBottom variant="h5" component="div">
+                      {product.name}
+                    </Typography>
+                    <Typography variant="inherit" component="div">
+                      ${product.price}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+                <Divider sx={{ borderColor: "gray" }} />
+                <CardActions>
+                  <Box className="d-flex justify-content-between align-items-center w-100 py-1 ">
+                    <ShareIcon
+                      className="fs-1 py-1 rounded-1"
+                      sx={{
+                        cursor: "pointer",
+                        border: "1px solid #7FBA00",
+                        color: "#7FBA00",
+                      }}
+                    />
+                    <ShoppingCartIcon
+                      sx={{
+                        cursor: "pointer",
+                        backgroundColor: "#7FBA00",
+                        color: "#fff",
+                      }}
+                      className="w-50 fs-1 py-1 rounded-1"
+                      onClick={() => {
+                        cartHandler(product);
+                      }}
+                    />
+                    <FavoriteBorderIcon
+                      className="rounded-1 fs-1 py-1"
+                      sx={{
+                        cursor: "pointer",
+                        border: "1px solid #7FBA00",
+                        color: "#7FBA00",
+                      }}
+                    />
+                  </Box>
+                </CardActions>
+              </Card>
+            );
+          })}
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 
