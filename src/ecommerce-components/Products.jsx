@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -55,11 +55,9 @@ const Products = () => {
     const isExist = cartList.find((cart) => cart.id === product.id);
 
     if (!isExist) {
-      setCartList((prev) => {
-        const strCart = [...prev, product];
-        localStorage.setItem("cartItems", JSON.stringify(strCart))
-        return strCart;
-      });
+      setCartList((prev) => 
+      [...prev, product]
+      )
 
       setOpenSuccess(true);
     } else {
@@ -67,6 +65,14 @@ const Products = () => {
       setOpenAlert(true);
     }
   };
+
+  useEffect(() => {
+if(cartList.length>0){
+  let strCart = JSON.stringify(cartList)
+localStorage.setItem('cartItems', strCart)
+}
+  
+}, [cartList])
 
   const handleClose = (reason) => {
     if (reason === "clickaway") {
