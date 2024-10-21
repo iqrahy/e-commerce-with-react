@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -14,10 +14,9 @@ import ShareIcon from "@mui/icons-material/Share";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Divider from "@mui/material/Divider";
-import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
+import Snackbar from "@mui/material/Snackbar";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 
 const products = [
@@ -55,17 +54,16 @@ const Products = () => {
   const cartHandler = (product) => {
     const isExist = cartList.find((cart) => cart.id === product.id);
 
-   
-
     if (!isExist) {
-      setCartList((prev) => [...prev, product]);
-     
+      setCartList((prev) => {
+        const strCart = [...prev, product];
+        localStorage.setItem("cartItems", JSON.stringify(strCart))
+        return strCart;
+      });
+
       setOpenSuccess(true);
     } else {
-
-      const strCart = JSON.stringify(cartList);
-      localStorage.setItem("cartItems", strCart);
-
+    
       setOpenAlert(true);
     }
   };
